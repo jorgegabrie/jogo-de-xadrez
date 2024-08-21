@@ -10,11 +10,24 @@ import javax.swing.plaf.metal.MetalIconFactory;
 
 public class ChessMatch {
 
+    private int turn;
+    private Color currentPlayer;
+
     private Board board;
 
     public ChessMatch(){
+        turn = 1;
+        currentPlayer = Color.WHITE;
         board = new Board(8, 8);
         initialSetup();
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int getTurn() {
+        return turn;
     }
 
     public ChessPiece[][] getPieces(){
@@ -40,6 +53,7 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+        nextTurn();
         return (ChessPiece) capturedPiece;
     }
 
@@ -54,6 +68,9 @@ public class ChessMatch {
         if (!board.thereIsAPiece(position)){
             throw new ChessException("Não existe peça nessa posição");
         }
+        if (currentPlayer != ((ChessPiece)board.piece(position)).getColor()){
+            throw new ChessException("A peça escolhida não é sua!");
+        }
         if (!board.piece(position).isThereAnyPossibleMove()){
             throw new ChessException("Não existe movimentos para a peça escolhida!");
         }
@@ -63,6 +80,12 @@ public class ChessMatch {
             throw new ChessException("A peça escolhida não pode mover para a posição de destino");
         }
     }
+
+    private void nextTurn(){
+        turn++;
+        currentPlayer = (currentPlayer == Color.WHITE ? Color.BLACK : Color.WHITE);
+    }
+
     private void placeNewPiece(char collumn, int row, Piece piece){
         board.placePiece(piece, new ChessPosition(collumn, row).toPosition());
     }
