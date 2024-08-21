@@ -7,13 +7,17 @@ import chess.pieces.King;
 import chess.pieces.Rook;
 
 import javax.swing.plaf.metal.MetalIconFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChessMatch {
 
     private int turn;
     private Color currentPlayer;
-
     private Board board;
+
+    private List<Piece> piecesOnTheBoard = new ArrayList<>();
+    private List<Piece> capturedPieces = new ArrayList<>();
 
     public ChessMatch(){
         turn = 1;
@@ -61,6 +65,11 @@ public class ChessMatch {
         Piece p = board.removePiece(source);
         Piece capturedPiece = board.removePiece(target);
         board.placePiece(p, target);
+
+        if (capturedPiece != null){
+            piecesOnTheBoard.remove(capturedPiece);
+            capturedPieces.add(capturedPiece);
+        }
         return capturedPiece;
     }
 
@@ -88,6 +97,7 @@ public class ChessMatch {
 
     private void placeNewPiece(char collumn, int row, Piece piece){
         board.placePiece(piece, new ChessPosition(collumn, row).toPosition());
+        piecesOnTheBoard.add(piece);
     }
 
     private void initialSetup(){
